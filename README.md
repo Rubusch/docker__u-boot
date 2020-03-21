@@ -44,23 +44,4 @@ Login into the docker container
 $ docker run --rm -ti --user=$USER:$USER --workdir=/home/$USER -v $PWD/configs:/home/$USER/configs -v $PWD/u-boot:/home/$USER/u-boot rubuschl/ubootpatches:20191203212934 /bin/bash
 ```
 
-Obtain the current config as a starting point  
-
-```
-$ zcat /proc/config.gz > .config
-```
-
-Generate _TAGS_ file  
-
-```
-$ make tags
-```
-
-Build the for debian as follows  
-
-```
-$ make -j8 deb-pkg all
-```
-
 Make sure to backup your work also outside the container.  
-
