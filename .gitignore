@@ -4,5 +4,4 @@
 *.orig
 
 ## ignore output folder
-linux
-
+u-boot
