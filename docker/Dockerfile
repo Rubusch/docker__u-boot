@@ -51,10 +51,15 @@ RUN apt-get install -y  \
     latexmk \
     librsvg2-bin \
     virtualenv \
-    python3-sphinx
-
-## for building development environment
-RUN apt-get install -y  \
+    python3-sphinx \
+    python3-sphinx-rtd-theme \
+    texlive-xetex \
+    libsdl1.2-dev \
+    libsdl2-dev \
+    python3-pytest \
+    swig \
+    python3-dev \
+    qemu-system \
     vim \
     libncurses5-dev \
     gcc \
@@ -65,10 +70,7 @@ RUN apt-get install -y  \
     bison \
     flex \
     libelf-dev \
-    bc
-
-## my add ons for patch development
-RUN apt-get install -y  \
+    bc \
     aptitude \
     tig \
     emacs-nox \
