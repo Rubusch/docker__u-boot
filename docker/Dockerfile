@@ -123,8 +123,8 @@ RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.vimrc" && sudo su $US
 RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.emacs" && sudo su $USER -c "ln -s /home/$USER/configs/.emacs /home/$USER/"
 
 ## git config
-RUN cd /home/$USER && sudo su $USER -c "git config --global user.name \"Lothar Rubusch\""
-RUN cd /home/$USER && sudo su $USER -c "git config --global user.email l.rubusch@gmail.com"
+RUN cd /home/$USER && sudo su $USER -c "git config --global user.name \"$GMAIL_USER\""
+RUN cd /home/$USER && sudo su $USER -c "git config --global user.email $GMAIL"
 RUN cd /home/$USER && sudo su $USER -c "git config --global alias.st status"
 RUN cd /home/$USER && sudo su $USER -c "git config --global alias.ci commit"
 RUN cd /home/$USER && sudo su $USER -c "git config --global alias.co checkout"
