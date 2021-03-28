@@ -8,6 +8,22 @@ A docker image for patch development. A ``build.sh`` script will in a second ste
 
 The setup needs a gmail email address for patch delivery via ``git send-email``. Many other email providers are possible in general, too  
 
+**NODE** Fix up missing email settings in provided git config at TODO   
+
+```
+$ cd docker
+
+$ docker-compose up
+```
+
+## Usage
+
+```
+$ docker-compose -f ./docker-compose.yml run --rm u-boot_devel /bin/bash
+
+
+TODO rm
+
 **NOTE** Replace ``gmail user name``, ``email@gmail.com`` and ``gmail password`` with your gmail credentials  
 
 **NOTE** For the gamil password escape ``<`` and ``>`` i.e. write ``\\\<`` and ``\\\>``, in any case don't use quotes.  
@@ -15,7 +31,7 @@ The setup needs a gmail email address for patch delivery via ``git send-email``.
 ```
 $ cd ./docker
 
-$ time docker build --no-cache --build-arg USER=$USER --build-arg GMAIL_USER="<gmail user name>" --build-arg GMAIL=<email@gmail.com> --build-arg GMAIL_PASSW=<gmail password> -t rubuschl/ubootpatches:$(date +%Y%m%d%H%M%S) .
+$ docker build --no-cache --build-arg USER=$USER --build-arg GMAIL_USER="<gmail user name>" --build-arg GMAIL=<email@gmail.com> --build-arg GMAIL_PASSW=<gmail password> -t rubuschl/ubootpatches:$(date +%Y%m%d%H%M%S) .
     10m...
 ```
 
