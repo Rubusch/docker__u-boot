@@ -88,6 +88,9 @@ RUN useradd "$USER" -m --password "$USER"
 RUN usermod -a -G sudo "$USER"
 RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
 
+## in case it already exists (workdir)
+RUN chown $USER.$USER -R /home/$USER
+
 
 ################################################################################
 ## get sources
