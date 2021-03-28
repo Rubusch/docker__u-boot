@@ -94,8 +94,8 @@ RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
 ## NOTE: this container will obtain sources in manually executed script (later), sources shall be shared between container and outside
 
 ## prepare paths
-RUN sudo su $USER -c "mkdir -p /home/$USER/u-boot"
-RUN sudo su $USER -c "mkdir -p /home/$USER/configs"
+RUN mkdir -p /home/$USER/u-boot
+RUN mkdir -p /home/$USER/configs
 
 ## reset permissions
 RUN chown $USER:$USER -R /home/$USER/u-boot
