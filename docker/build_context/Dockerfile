@@ -9,15 +9,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ## in case docker complains for a not set USER, perhaps you forgot to use --build-arg USER=$USER
 ARG USER=""
 
-## gmail user
-ARG GMAIL_USER=""
-
-## email address at gmail
-ARG GMAIL=""
-
-## email password for that address
-ARG GMAIL_PASSW=""
-
 
 ################################################################################
 ## set up apt fully functional
@@ -113,6 +104,9 @@ RUN chown $USER:$USER -R /home/$USER/configs
 ################################################################################
 ## set up tools
 
+## TODO        
+#USER: $USER
+
 ## bash config
 RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.bashrc" && sudo su $USER -c "ln -s /home/$USER/configs/.bashrc /home/$USER/"
 
@@ -122,22 +116,24 @@ RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.vimrc" && sudo su $US
 ## emacs config
 RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.emacs" && sudo su $USER -c "ln -s /home/$USER/configs/.emacs /home/$USER/"
 
+## gitconfig (contains secrets)
+RUN cd /home/$USER && sudo su $USER -c "ln -s /home/$USER/secrets/.gitconfig /home/$USER/"
+
 ## git config
-RUN cd /home/$USER && sudo su $USER -c "git config --global user.name \"$GMAIL_USER\""
-RUN cd /home/$USER && sudo su $USER -c "git config --global user.email $GMAIL"
-RUN cd /home/$USER && sudo su $USER -c "git config --global alias.st status"
-RUN cd /home/$USER && sudo su $USER -c "git config --global alias.ci commit"
-RUN cd /home/$USER && sudo su $USER -c "git config --global alias.co checkout"
-RUN cd /home/$USER && sudo su $USER -c "git config --global alias.br branch"
-
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.from \"$GMAIL_USER <$GMAIL>\""
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserver smtp.gmail.com"
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpuser $GMAIL"
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpencryption tls"
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtppass $GMAIL_PASSW"
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.chainreplyto false"
-RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserverport 587"
-
+## TODO setup gitconfig template in build_configs, then copy over to fill out (passwd) in git hidden file
+#RUN cd /home/$USER && sudo su $USER -c "git config --global user.name \"$GMAIL_USER\""
+#RUN cd /home/$USER && sudo su $USER -c "git config --global user.email $GMAIL"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.st status"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.ci commit"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.co checkout"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.br branch"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.from \"$GMAIL_USER <$GMAIL>\""
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserver smtp.gmail.com"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpuser $GMAIL"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpencryption tls"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtppass $GMAIL_PASSW"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.chainreplyto false"
+#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserverport 587"
 
 ## codespell: dictionary fix
 RUN mkdir -p /usr/share/codespell

@@ -22,6 +22,8 @@ services:
         volumes:
           - ./u-boot:/home/$USER/u-boot  ## folder does not need to be around
 
+          - ./secrets:/home/$USER/.secrets
+
           - type: bind
             source: ./build_configs      ## folder must be around
             target: /home/$USER/configs
