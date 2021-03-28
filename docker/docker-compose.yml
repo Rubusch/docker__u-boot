@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+    u-boot_devel:
+        container_name: u-boot_devel
+        image: rubuschl/u-boot
+        build:
+            context: build_context
+            dockerfile: Dockerfile
+            args:
+                USER: $USER
+        user: $USER              ## docker run --user=$USER
+        working_dir: /home/$USER ## docker run --workdir=...
+        stdin_open: true         ## docker run -i
+        tty: true                ## docker run -t
+        hostname: u-boot_devel
+        #privileged: true
+
+        environment:
+          - USER
+
+        volumes:
+          - ./u-boot:/home/$USER/u-boot  ## folder does not need to be around
+
+          - type: bind
+            source: ./build_configs      ## folder must be around
+            target: /home/$USER/configs
