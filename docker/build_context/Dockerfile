@@ -1,6 +1,5 @@
 FROM debian:10
 MAINTAINER Lothar Rubusch <l.rubusch@gmail.com>
-WORKDIR /root
 ENV DEBIAN_FRONTEND=noninteractive
 
 
@@ -9,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ## in case docker complains for a not set USER, perhaps you forgot to use --build-arg USER=$USER
 ARG USER=""
 
+WORKDIR /home/$USER
 
 ################################################################################
 ## set up apt fully functional
@@ -90,21 +90,8 @@ RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
 
 
 ################################################################################
-## get sources
-## NOTE: this container will obtain sources in manually executed script (later), sources shall be shared between container and outside
-
-### prepare paths
-#RUN sudo su $USER -c "mkdir -p /home/$USER/u-boot"
-#RUN sudo su $USER -c "mkdir -p /home/$USER/configs"
-#
-### reset permissions
-#RUN chown $USER:$USER -R /home/$USER/u-boot
-#RUN chown $USER:$USER -R /home/$USER/configs
-
-
-################################################################################
 ## set up tools
-USER: $USER
+USER $USER
 
 ## bash config
 RUN cd /home/$USER && rm -f /home/$USER/.bashrc && ln -s /home/$USER/configs/.bashrc /home/$USER/
