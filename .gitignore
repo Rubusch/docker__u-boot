@@ -5,3 +5,6 @@
 
 ## ignore output folder
 u-boot
+
+## don't track email credentials
+secrets
