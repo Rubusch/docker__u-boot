@@ -69,6 +69,7 @@ RUN apt-get install -y  \
     python-ply \
     python-git
 
+
 ################################################################################
 ## locale settings
 RUN locale-gen
@@ -92,56 +93,37 @@ RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
 ## get sources
 ## NOTE: this container will obtain sources in manually executed script (later), sources shall be shared between container and outside
 
-## prepare paths
-RUN sudo su $USER -c "mkdir -p /home/$USER/u-boot"
-RUN sudo su $USER -c "mkdir -p /home/$USER/configs"
-
-## reset permissions
-RUN chown $USER:$USER -R /home/$USER/u-boot
-RUN chown $USER:$USER -R /home/$USER/configs
+### prepare paths
+#RUN sudo su $USER -c "mkdir -p /home/$USER/u-boot"
+#RUN sudo su $USER -c "mkdir -p /home/$USER/configs"
+#
+### reset permissions
+#RUN chown $USER:$USER -R /home/$USER/u-boot
+#RUN chown $USER:$USER -R /home/$USER/configs
 
 
 ################################################################################
 ## set up tools
-
-## TODO        
-#USER: $USER
+USER: $USER
 
 ## bash config
-RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.bashrc" && sudo su $USER -c "ln -s /home/$USER/configs/.bashrc /home/$USER/"
+RUN cd /home/$USER && rm -f /home/$USER/.bashrc && ln -s /home/$USER/configs/.bashrc /home/$USER/
 
 ## vim config
-RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.vimrc" && sudo su $USER -c "ln -s /home/$USER/configs/.vimrc /home/$USER/"
+RUN cd /home/$USER && rm -f /home/$USER/.vimrc && ln -s /home/$USER/configs/.vimrc /home/$USER/
 
 ## emacs config
-RUN cd /home/$USER && sudo su $USER -c "rm -f /home/$USER/.emacs" && sudo su $USER -c "ln -s /home/$USER/configs/.emacs /home/$USER/"
+RUN cd /home/$USER && rm -f /home/$USER/.emacs && ln -s /home/$USER/configs/.emacs /home/$USER/
 
 ## gitconfig (contains secrets)
-RUN cd /home/$USER && sudo su $USER -c "ln -s /home/$USER/secrets/.gitconfig /home/$USER/"
-
-## git config
-## TODO setup gitconfig template in build_configs, then copy over to fill out (passwd) in git hidden file
-#RUN cd /home/$USER && sudo su $USER -c "git config --global user.name \"$GMAIL_USER\""
-#RUN cd /home/$USER && sudo su $USER -c "git config --global user.email $GMAIL"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.st status"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.ci commit"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.co checkout"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global alias.br branch"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.from \"$GMAIL_USER <$GMAIL>\""
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserver smtp.gmail.com"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpuser $GMAIL"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpencryption tls"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtppass $GMAIL_PASSW"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.chainreplyto false"
-#RUN cd /home/$USER && sudo su $USER -c "git config --global sendemail.smtpserverport 587"
+RUN cd /home/$USER && rm -f /home/$USER/.gitconfig && ln -s /home/$USER/secrets/.gitconfig /home/$USER/
 
 ## codespell: dictionary fix
-RUN mkdir -p /usr/share/codespell
-RUN ln -s /usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt /usr/share/codespell/dictionary.txt
+RUN sudo mkdir -p /usr/share/codespell
+RUN sudo ln -s /usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt /usr/share/codespell/dictionary.txt
 
 
 ################################################################################
 ## command mode
 COPY build.sh /usr/local/bin/build.sh
 CMD ["/bin/bash", "/usr/local/bin/build.sh"]
-
