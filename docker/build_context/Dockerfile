@@ -8,7 +8,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ## in case docker complains for a not set USER, perhaps you forgot to use --build-arg USER=$USER
 ARG USER=""
 
-WORKDIR /home/$USER
 
 ################################################################################
 ## set up apt fully functional
@@ -88,9 +87,6 @@ RUN useradd "$USER" -m --password "$USER"
 RUN usermod -a -G sudo "$USER"
 RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
 
-## in case it already exists (workdir)
-RUN chown $USER.$USER -R /home/$USER
-
 
 ################################################################################
 ## get sources
@@ -101,25 +97,25 @@ RUN mkdir -p /home/$USER/u-boot
 RUN mkdir -p /home/$USER/configs
 
 ## reset permissions
-RUN chown $USER:$USER -R /home/$USER/u-boot
-RUN chown $USER:$USER -R /home/$USER/configs
+RUN chown $USER:$USER -R /home/$USER/
 
 
 ################################################################################
 ## set up tools
 USER $USER
+WORKDIR /home/$USER
 
 ## bash config
-RUN cd /home/$USER && rm -f /home/$USER/.bashrc && ln -s /home/$USER/configs/.bashrc /home/$USER/
+RUN rm -f /home/$USER/.bashrc && ln -s /home/$USER/configs/.bashrc /home/$USER/
 
 ## vim config
-RUN cd /home/$USER && rm -f /home/$USER/.vimrc && ln -s /home/$USER/configs/.vimrc /home/$USER/
+RUN rm -f /home/$USER/.vimrc && ln -s /home/$USER/configs/.vimrc /home/$USER/
 
 ## emacs config
-RUN cd /home/$USER && rm -f /home/$USER/.emacs && ln -s /home/$USER/configs/.emacs /home/$USER/
+RUN rm -f /home/$USER/.emacs && ln -s /home/$USER/configs/.emacs /home/$USER/
 
 ## gitconfig (contains secrets)
-RUN cd /home/$USER && rm -f /home/$USER/.gitconfig && ln -s /home/$USER/secrets/.gitconfig /home/$USER/
+RUN rm -f /home/$USER/.gitconfig && ln -s /home/$USER/secrets/.gitconfig /home/$USER/
 
 ## codespell: dictionary fix
 RUN sudo mkdir -p /usr/share/codespell
