@@ -15,6 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ################################################################################
 ## apt
+USER root
 RUN apt-get update && apt-get upgrade -y && apt-get autoremove -y --purge
 RUN apt-get install -y latexmk
 RUN apt-get install -y librsvg2-bin
@@ -27,6 +28,7 @@ RUN apt-get install -y python3-git
 
 ################################################################################
 ## sources
+USER root
 
 ## mountpoints
 RUN mkdir -p /home/$USER/u-boot
