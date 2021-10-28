@@ -4,18 +4,19 @@
 
 # Docker: U-boot Environment for Patch Development
 
-
-A docker image for patch development. A ``build.sh`` script will in a second step clone a staging tree. ``configs`` and ``staging`` tree will be setup outside the container, but shared with the container.  
+A docker image for patch development.  
 
 
 ## Tools Needed
 
 ```
-$ sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-$ sudo chmod a+x /usr/local/bin/docker-compose
+$ sudo apt-get install -y libffi-dev libssl-dev
+$ sudo apt-get install -y python3-dev
+$ sudo apt-get install -y python3 python3-pip
+$ pip3 install docker-compose
 ```
 
-NB: Where 1.28.6 is the latest version (currently not supported by devian/ubuntu package management)  
+Make sure, ``~/.local`` is within ``$PATH`` or re-link e.g. it to ``/usr/local``.  
 
 
 ## Build
@@ -23,8 +24,7 @@ NB: Where 1.28.6 is the latest version (currently not supported by devian/ubuntu
 The setup needs a gmail email address for patch delivery via ``git send-email``. Many other email providers are possible in general, too  
 
 ```
-$ cd docker
-$ docker-compose up
+$ ./setup.sh
 ```
 
 **NOTE** After first run, go to ``docker/secrets/.gitconfig`` or in the container ``/home/USER/.gitconfig`` (same file), and fill out what is missing.  
@@ -33,5 +33,6 @@ $ docker-compose up
 ## Usage
 
 ```
+$ cd ./docker
 $ docker-compose -f ./docker-compose.yml run --rm u-boot_devel /bin/bash
 ```

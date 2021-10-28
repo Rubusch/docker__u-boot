@@ -1,98 +1,34 @@
-FROM debian:10
+################################################################################
+## the USER is needed to make it available as --build-arg
+## in case docker complains for a not set USER, perhaps you forgot to
+## use --build-arg USER=$USER
+ARG USER="${USER}"
+ARG DOCKER_BASE="sandbox"
+ARG DOCKER_BASE_TAG="20211027"
+
+
+################################################################################
+FROM ${USER}/${DOCKER_BASE}:${DOCKER_BASE_TAG} AS u-boot
 MAINTAINER Lothar Rubusch <l.rubusch@gmail.com>
 ENV DEBIAN_FRONTEND=noninteractive
 
 
 ################################################################################
-## the USER is needed to make it available as --build-arg
-## in case docker complains for a not set USER, perhaps you forgot to use --build-arg USER=$USER
-ARG USER=""
-
-
-################################################################################
-## set up apt fully functional
+## apt
 RUN apt-get update && apt-get upgrade -y && apt-get autoremove -y --purge
-RUN apt-get install -y  \
-    zlib1g-dev \
-    g++ \
-    build-essential \
-    rsync \
-    binutils \
-    unzip \
-    python \
-    bzip2 \
-    locales \
-    libc6-dev \
-    fakeroot \
-    bin86 \
-    udev \
-    hdparm \
-    xmlto \
-    tree \
-    colordiff \
-    sudo
-
-## for building documentation targets
-RUN apt-get install -y  \
-    imagemagick \
-    graphviz \
-    dvipng \
-    fonts-noto-cjk \
-    latexmk \
-    librsvg2-bin \
-    virtualenv \
-    python3-sphinx \
-    python3-sphinx-rtd-theme \
-    texlive-xetex \
-    libsdl1.2-dev \
-    libsdl2-dev \
-    python3-pytest \
-    swig \
-    python3-dev \
-    qemu-system \
-    vim \
-    libncurses5-dev \
-    gcc \
-    make \
-    git-all \
-    exuberant-ctags \
-    libssl-dev \
-    bison \
-    flex \
-    libelf-dev \
-    bc \
-    aptitude \
-    tig \
-    emacs-nox \
-    codespell \
-    python-ply \
-    python-git
+RUN apt-get install -y latexmk
+RUN apt-get install -y librsvg2-bin
+RUN apt-get install -y virtualenv
+RUN apt-get install -y python3-sphinx
+RUN apt-get install -y python3-sphinx-rtd-theme
+RUN apt-get install -y python3-ply
+RUN apt-get install -y python3-git
 
 
 ################################################################################
-## locale settings
-RUN locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+## sources
 
-## locale-hack, needed for debian since locale-gen <arg> seems not to work
-RUN sed -i '/^#.* en_US.UTF-8.* /s/^#//' /etc/locale.gen
-RUN locale-gen
-
-
-################################################################################
-## setup user and run stuff under user
-RUN useradd "$USER" -m --password "$USER"
-RUN usermod -a -G sudo "$USER"
-RUN sed -i '/%sudo/s/.*/%sudo   ALL=NOPASSWD: ALL/' /etc/sudoers
-
-
-################################################################################
-## get sources
-## NOTE: this container will obtain sources in manually executed script (later), sources shall be shared between container and outside
-
-## prepare paths
+## mountpoints
 RUN mkdir -p /home/$USER/u-boot
 RUN mkdir -p /home/$USER/configs
 
@@ -103,19 +39,6 @@ RUN chown $USER:$USER -R /home/$USER/
 ################################################################################
 ## set up tools
 USER $USER
-WORKDIR /home/$USER
-
-## bash config
-RUN rm -f /home/$USER/.bashrc && ln -s /home/$USER/configs/.bashrc /home/$USER/
-
-## vim config
-RUN rm -f /home/$USER/.vimrc && ln -s /home/$USER/configs/.vimrc /home/$USER/
-
-## emacs config
-RUN rm -f /home/$USER/.emacs && ln -s /home/$USER/configs/.emacs /home/$USER/
-
-## gitconfig (contains secrets)
-RUN rm -f /home/$USER/.gitconfig && ln -s /home/$USER/secrets/.gitconfig /home/$USER/
 
 ## codespell: dictionary fix
 RUN sudo mkdir -p /usr/share/codespell
@@ -124,5 +47,9 @@ RUN sudo ln -s /usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt 
 
 ################################################################################
 ## command mode
-COPY build.sh /usr/local/bin/build.sh
+USER ${USER}
+WORKDIR /home/$USER
+
+## setup default script
+COPY *.sh /usr/local/bin/
 CMD ["/bin/bash", "/usr/local/bin/build.sh"]

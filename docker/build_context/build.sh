@@ -1,18 +1,17 @@
-#!/bin/bash -e
-HOME="/home/$(whoami)"
+#!/bin/sh -e
+MY_USER="${USER}"
+MY_HOME="/home/${MY_USER}"
 BRANCH="master"
-SOURCES_DIR="${HOME}/u-boot"
-CONFIGS_DIR="${HOME}/configs"
-SECRETS_DIR="${HOME}/secrets"
-SHARES=( ${SOURCES_DIR} ${CONFIGS_DIR} ${SECRETS_DIR} )
+WORKSPACE_DIR="${MY_HOME}/workspace"
+SOURCES_DIR="${WORKSPACE_DIR}/u-boot"
+CONFIGS_DIR="${MY_HOME}/configs"
+SECRETS_DIR="${MY_HOME}/secrets"
 
-## fix permissions
-for item in ${SHARES[*]}; do
-    test -e ${item} && sudo chown $(whoami).$(whoami) -R ${item}
-done
+## prepare
+00_defenv.sh "${WORKSPACE_DIR}" "${CONFIGS_DIR}" "${SECRETS_DIR}"
 
-if [[ ! -f ${SECRETS_DIR}/.gitconfig ]]; then
-    cp ${CONFIGS_DIR}/.gitconfig ${SECRETS_DIR}/.gitconfig
+if [ ! -f "${SECRETS_DIR}/.gitconfig" ]; then
+    cp "${CONFIGS_DIR}/.gitconfig" "${SECRETS_DIR}/.gitconfig"
     echo "!!! FIRST TIME INSTALLATION !!!"
     echo "!!!"
     echo "!!! PLEASE FILL SECRET INFORMATION (NOT GIT TRACKED) IN"
@@ -22,27 +21,28 @@ if [[ ! -f ${SECRETS_DIR}/.gitconfig ]]; then
     exit 0
 fi
 
-cd ${HOME}
-
 ## get sources
-if [[ -d "${SOURCES_DIR}/.git" ]]; then
-  cd ${SOURCES_DIR}
+if [ -d "${SOURCES_DIR}/.git" ]; then
+  pushd "${SOURCES_DIR}" &> /dev/null
   git fetch --all
+  popd &> /dev/null
 else
-  git clone -j4 --branch $BRANCH https://gitlab.denx.de/u-boot/u-boot.git u-boot
+  pushd "${MY_HOME}" &> /dev/null
+  git clone -j4 --branch "${BRANCH}" https://gitlab.denx.de/u-boot/u-boot.git u-boot
+  popd &> /dev/null
 fi
 
 ## generate TAGS
-cd ${SOURCES_DIR}
-rm -f ./TAGS
-find . -regex ".*\.\(h\|c\)$" -exec etags -a {} \;
+#cd "${SOURCES_DIR}"
+#rm -f ./TAGS
+#find . -regex ".*\.\(h\|c\)$" -exec etags -a {} \;
 
 ## setup checkpatch / codespell
 echo "#!/bin/sh" > ${SOURCES_DIR}/.git/hooks/post-commit
-echo "exec git show --format=email HEAD | ./scripts/checkpatch.pl --strict --codespell" >> ${SOURCES_DIR}/.git/hooks/post-commit
-chmod a+x ${SOURCES_DIR}/.git/hooks/post-commit
+echo "exec git show --format=email HEAD | ./scripts/checkpatch.pl --strict --codespell" >> "${SOURCES_DIR}/.git/hooks/post-commit"
+chmod a+x "${SOURCES_DIR}/.git/hooks/post-commit"
 
-cd ${SOURCES_DIR}
+cd "${SOURCES_DIR}"
 make clean
 
 echo "READY."
