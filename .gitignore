@@ -8,3 +8,9 @@ u-boot
 
 ## don't track email credentials
 secrets
+
+## docker base image
+sandbox
+
+## docker environment
+.env

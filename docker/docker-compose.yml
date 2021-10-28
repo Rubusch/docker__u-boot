@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
     u-boot_devel:
-        container_name: u-boot_devel
+        container_name: u-boot
         image: rubuschl/u-boot
         build:
             context: build_context
             dockerfile: Dockerfile
             args:
                 USER: "${USER}"
-                UID : "${UID}"
-                GID : "${GID}"
-        user: "${UID}":"${GID}"  ## docker run --user=$USER
+                UID: "${UID}"
+                GID: "${GID}"
+        user: "${UID}:${GID}"  ## docker run --user=$USER
         working_dir: /home/$USER ## docker run --workdir=...
         stdin_open: true         ## docker run -i
         tty: true                ## docker run -t
