@@ -1,16 +1,26 @@
 ################################################################################
-## the USER is needed to make it available as --build-arg
-## in case docker complains for a not set USER, perhaps you forgot to
-## use --build-arg USER=$USER
+## ATTENTION: multistage build
+##
+## based on current USER and TAG, DOCKER_BASE:
+## https://github.com/Rubusch/docker__zephyr-base
+##
+################################################################################
+## base image settings
 ARG USER="${USER}"
 ARG DOCKER_BASE="sandbox"
 ARG DOCKER_BASE_TAG="20211028"
 
 
 ################################################################################
+## base image
 FROM ${USER}/${DOCKER_BASE}:${DOCKER_BASE_TAG} AS u-boot
 MAINTAINER Lothar Rubusch <l.rubusch@gmail.com>
 ENV DEBIAN_FRONTEND=noninteractive
+
+
+################################################################################
+## environment (applied ARG/ENV must come after FROM declaration)
+ARG USER="${USER}"
 
 
 ################################################################################
@@ -32,7 +42,6 @@ USER root
 
 ## mountpoints
 RUN mkdir -p /home/$USER/u-boot
-RUN mkdir -p /home/$USER/configs
 
 ## reset permissions
 RUN chown $USER:$USER -R /home/$USER/
@@ -51,7 +60,5 @@ RUN sudo ln -s /usr/lib/python3/dist-packages/codespell_lib/data/dictionary.txt 
 ## command mode
 USER ${USER}
 WORKDIR /home/$USER
-
-## setup default script
 COPY *.sh /usr/local/bin/
 CMD ["/bin/bash", "/usr/local/bin/build.sh"]
